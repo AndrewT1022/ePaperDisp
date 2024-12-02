@@ -95,7 +95,6 @@ float BMPAltitude = bmp.readAltitude(1028.4); // m ------- PUT CURRENT LOCAL PRE
     paint.SetHeight(220);
     paint.Clear(UNCOLORED);
 
-    //Note: add units later!!
     paint.DrawStringAt(0, 0, "Temperature:", &Font20, COLORED); //Print temperature on one line and the value on the next
     paint.DrawStringAt(0, 20, AHTTempStr, &Font20, COLORED);
     paint.DrawStringAt(60,22, "*C", &Font16, COLORED);
