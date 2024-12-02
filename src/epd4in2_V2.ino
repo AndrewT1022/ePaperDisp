@@ -66,8 +66,8 @@ void setup() {
   /* This clears the SRAM of the e-paper display */
   epd.Clear();
 
-    paint.SetWidth(300);
-    paint.SetHeight(220);
+    paint.SetWidth(250);
+    paint.SetHeight(280);
 
 paint.Clear(UNCOLORED);
 
@@ -114,13 +114,13 @@ float BMPPressureP = BMPPressure*0.295299802;
   dtostrf(BMPPressureP / 1000.0, 6, 2, BMPPressureStrP);
   dtostrf(BMPAltitude, 6, 2, BMPAltitudeStr);
   dtostrf(BMPAltitudeF, 6, 2, BMPAltitudeStrF);
-    paint.SetWidth(300);
-    paint.SetHeight(220);
+    paint.SetWidth(250);
+    paint.SetHeight(280);
     paint.Clear(UNCOLORED);
 
 
+//Metric section
     if (toggleState){
-
     paint.DrawStringAt(0, 0, "Temperature:", &Font20, COLORED); //Print temperature on one line and the value on the next
     paint.DrawStringAt(0, 20, AHTTempStr, &Font20, COLORED);
     paint.DrawStringAt(60,22, "*C", &Font16, COLORED);
@@ -133,7 +133,8 @@ float BMPPressureP = BMPPressure*0.295299802;
     paint.DrawStringAt(-10, 200, BMPAltitudeStr, &Font20, COLORED);
     paint.DrawStringAt(75,203, "m", &Font16, COLORED);
     }
-    
+
+//Imperial section
     else{
     paint.DrawStringAt(0, 0, "Temperature:", &Font20, COLORED); //Print temperature on one line and the value on the next
     paint.DrawStringAt(0, 20, AHTTempStrF, &Font20, COLORED);
@@ -153,6 +154,9 @@ float BMPPressureP = BMPPressure*0.295299802;
     paint.DrawStringAt(70,82, "%", &Font16, COLORED);
 
 
+//Creds
+    paint.DrawStringAt(0, 245, "Andrew Thomas,", &Font16, COLORED); //Print humidity on one line and the value on the next
+    paint.DrawStringAt(0, 265, "Kyle Davis", &Font16, COLORED); //Print humidity on one line and the value on the next
   epd.Display_Partial(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
   epd.Sleep();
 delay(1000);
