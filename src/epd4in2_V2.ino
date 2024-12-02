@@ -1,6 +1,34 @@
 //This is our actual code page. The rest is either configuration or libaries. =)
 
 
+//Copyright for the e-ink display libraries:
+
+/*
+ *  @filename   :   epd4in2_V2.cpp
+ *  @brief      :   Implements for Dual-color e-paper library
+ *  @author     :   Yehui from Waveshare
+ *
+ *  Copyright (C) Waveshare     August 10 2017
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documnetation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to  whom the Software is
+ * furished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS OR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 #include <SPI.h>
 #include "epd4in2_V2.h"
 #include "epdpaint.h"
@@ -74,13 +102,15 @@ char AHTTempStr[10];
     paint.SetWidth(200);
     paint.SetHeight(200);
     paint.Clear(UNCOLORED);
-    paint.DrawStringAt(0, 0, "Temperature:", &Font20, COLORED);
+
+    //Note: add units!
+    paint.DrawStringAt(0, 0, "Temperature:", &Font20, COLORED); //Print temperature on one line and the value on the next
     paint.DrawStringAt(0, 20, AHTTempStr, &Font20, COLORED);
   
-    paint.DrawStringAt(0, 60, "Humidity:", &Font20, COLORED);
-    paint.DrawStringAt(0, 80, AHTHumidityStr, &Font20, COLORED);
+    paint.DrawStringAt(0, 60, "Humidity:", &Font20, COLORED); //Print humidity on one line and the value on the next
+    paint.DrawStringAt(0, 80, AHTHumidityStr, &Font20, COLORED); 
 
-    paint.DrawStringAt(0, 120, "Pressure:", &Font20, COLORED);
+    paint.DrawStringAt(0, 120, "Pressure:", &Font20, COLORED); //Print pressure on one line and the value on the next
     paint.DrawStringAt(0, 140, BMPPressureStr, &Font20, COLORED);
 
   epd.Display_Partial(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
