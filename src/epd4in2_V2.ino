@@ -1,8 +1,6 @@
 //This is our actual code page. The rest is either configuration or libaries. =)
 
-
 //Copyright for the e-ink display libraries:
-
 /*
  *  @filename   :   epd4in2_V2.cpp
  *  @brief      :   Implements for Dual-color e-paper library
@@ -88,7 +86,8 @@ float BMPTemp = bmp.readTemperature(); // *C
 float BMPPressure = bmp.readPressure(); // PA
 float BMPAltitude = bmp.readAltitude(); // m
 
-char AHTTempStr[10];
+//blehg
+  char AHTTempStr[10];
   char AHTHumidityStr[10];
   char BMPTempStr[10];
   char BMPPressureStr[10];
@@ -103,7 +102,7 @@ char AHTTempStr[10];
     paint.SetHeight(200);
     paint.Clear(UNCOLORED);
 
-    //Note: add units!
+    //Note: add units later!!
     paint.DrawStringAt(0, 0, "Temperature:", &Font20, COLORED); //Print temperature on one line and the value on the next
     paint.DrawStringAt(0, 20, AHTTempStr, &Font20, COLORED);
   
