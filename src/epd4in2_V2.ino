@@ -34,12 +34,11 @@
 #include <Adafruit_BMP280.h>
 #include <Adafruit_AHTX0.h>
 
+#define COLORED     0
+#define UNCOLORED   1
 unsigned char image[5000];  // Adjusted buffer size for resolution
 Paint paint(image, 400, 600);    // width should be the multiple of 8
 Epd epd;
-
-#define COLORED     0
-#define UNCOLORED   1
 
 Adafruit_BMP280 bmp; //Initialize BMP280 Sensor
 Adafruit_AHTX0 aht; //Initialize AHT21 Sensor
@@ -63,12 +62,6 @@ void setup() {
   /* This clears the SRAM of the e-paper display */
   epd.Clear();
 
-  /**
-    * Due to RAM not enough in Arduino UNO, a frame buffer is not allowed.
-    * In this case, a smaller image buffer is allocated and you have to 
-    * update a partial display several times.
-    * 1 byte = 8 pixels, therefore you have to set 8*N pixels at a time.
-    */
     paint.SetWidth(200);
     paint.SetHeight(200);
 
@@ -76,8 +69,6 @@ paint.Clear(UNCOLORED);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
 sensors_event_t humidity, temp;
 aht.getEvent(&humidity, &temp);
 float AHTTemp = temp.temperature; // *C
