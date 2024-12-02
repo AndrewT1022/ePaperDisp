@@ -28,6 +28,7 @@
  */
 
 #include <SPI.h>
+#include <string>
 #include "epd4in2_V2.h"
 #include "epdpaint.h"
 
@@ -104,7 +105,8 @@ float BMPAltitude = bmp.readAltitude(); // m
 
     //Note: add units later!!
     paint.DrawStringAt(0, 0, "Temperature:", &Font20, COLORED); //Print temperature on one line and the value on the next
-    paint.DrawStringAt(0, 20, AHTTempStr, &Font20, COLORED);
+    paint.DrawStringAt(0, 20, std::to_string(AHTTemp) + "*C", &Font20, COLORED);
+    paint.DrawStringAt(60,20, "*C", &Font16, COLORED);
   
     paint.DrawStringAt(0, 60, "Humidity:", &Font20, COLORED); //Print humidity on one line and the value on the next
     paint.DrawStringAt(0, 80, AHTHumidityStr, &Font20, COLORED); 
