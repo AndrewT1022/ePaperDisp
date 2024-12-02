@@ -1,6 +1,5 @@
 #include <SPI.h>
 #include "epd4in2_V2.h"
-#include "imagedata.h"
 #include "epdpaint.h"
 
 #include <Adafruit_BMP280.h>
@@ -64,7 +63,7 @@ char AHTTempStr[10];
   char BMPPressureStr[10];
   char BMPAltitudeStr[10];
 
-  dtostrf(AHTTemp, 3, 1, AHTTempStr);  // 4 total width, 2 decimal places
+  dtostrf(AHTTemp, 3, 1, AHTTempStr);  // 3 width, 1 decimal place
   dtostrf(AHTHumidity, 4, 2, AHTHumidityStr);
   dtostrf(BMPTemp, 3, 1, BMPTempStr);
   dtostrf(BMPPressure / 100.0, 6, 2, BMPPressureStr);  // Convert Pa to kPa
