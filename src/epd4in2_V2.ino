@@ -37,7 +37,7 @@
 
 #define COLORED     0
 #define UNCOLORED   1
-unsigned char image[5000];  // Adjusted buffer size for resolution
+unsigned char image[9000];  // Adjusted buffer size for resolution
 Paint paint(image, 400, 600);    // width should be the multiple of 8
 Epd epd;
 
@@ -63,8 +63,8 @@ void setup() {
   /* This clears the SRAM of the e-paper display */
   epd.Clear();
 
-    paint.SetWidth(200);
-    paint.SetHeight(200);
+    paint.SetWidth(300);
+    paint.SetHeight(220);
 
 paint.Clear(UNCOLORED);
 }
@@ -76,7 +76,8 @@ float AHTTemp = temp.temperature; // *C
 float AHTHumidity = humidity.relative_humidity; // %
 float BMPTemp = bmp.readTemperature(); // *C
 float BMPPressure = bmp.readPressure(); // PA
-float BMPAltitude = bmp.readAltitude(); // m
+float BMPAltitude = bmp.readAltitude(1028.4); // m ------- PUT CURRENT LOCAL PRESSURE HERE ---------------------
+
 
 //blehg
   char AHTTempStr[10];
@@ -90,8 +91,8 @@ float BMPAltitude = bmp.readAltitude(); // m
   dtostrf(BMPTemp, 3, 1, BMPTempStr);
   dtostrf(BMPPressure / 100.0, 6, 2, BMPPressureStr);  // Convert Pa to kPa
   dtostrf(BMPAltitude, 6, 2, BMPAltitudeStr);
-    paint.SetWidth(200);
-    paint.SetHeight(200);
+    paint.SetWidth(300);
+    paint.SetHeight(220);
     paint.Clear(UNCOLORED);
 
     //Note: add units later!!
@@ -105,7 +106,11 @@ float BMPAltitude = bmp.readAltitude(); // m
 
     paint.DrawStringAt(0, 120, "Pressure:", &Font20, COLORED); //Print pressure on one line and the value on the next
     paint.DrawStringAt(0, 140, BMPPressureStr, &Font20, COLORED);
-      paint.DrawStringAt(100,143, "kPA", &Font16, COLORED);
+    paint.DrawStringAt(100,143, "kPA", &Font16, COLORED);
+
+    paint.DrawStringAt(0, 180, "Altitude:", &Font20, COLORED); //Print altitude on one line and the value on the next
+    paint.DrawStringAt(-10, 200, BMPAltitudeStr, &Font20, COLORED);
+    paint.DrawStringAt(75,203, "m", &Font16, COLORED);
 
   epd.Display_Partial(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
 delay(1000);
