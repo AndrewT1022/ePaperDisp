@@ -43,6 +43,9 @@ Epd epd;
 
 Adafruit_BMP280 bmp; //Initialize BMP280 Sensor
 Adafruit_AHTX0 aht; //Initialize AHT21 Sensor
+int buttonPin = 5; //----------ASSIGN BUTTON PIN-----------
+bool toggleState = false;
+auto lastButtonState = HIGH;
 
 void setup() {
   // put your setup code here, to run once:
@@ -67,49 +70,91 @@ void setup() {
     paint.SetHeight(220);
 
 paint.Clear(UNCOLORED);
+
 }
 
 void loop() {
+//button
+pinMode(buttonPin, INPUT);
+auto buttonState = digitalRead(buttonPin);
+if (buttonState == LOW && lastButtonState == HIGH){
+  toggleState = !toggleState;
+}
+lastButtonState=buttonState;
+
+
+
 sensors_event_t humidity, temp;
 aht.getEvent(&humidity, &temp);
 float AHTTemp = temp.temperature; // *C
+float AHTTempF = ((temp.temperature)*(1.8)+32); // *F
 float AHTHumidity = humidity.relative_humidity; // %
 float BMPTemp = bmp.readTemperature(); // *C
 float BMPPressure = bmp.readPressure(); // PA
 float BMPAltitude = bmp.readAltitude(1028.4); // m ------- PUT CURRENT LOCAL PRESSURE HERE ---------------------
+float BMPAltitudeF = BMPAltitude*3.28084;
+float BMPPressureP = BMPPressure*0.295299802;
 
 
 //blehg
   char AHTTempStr[10];
+  char AHTTempStrF[10];
   char AHTHumidityStr[10];
   char BMPTempStr[10];
   char BMPPressureStr[10];
+  char BMPPressureStrP[10];
   char BMPAltitudeStr[10];
+  char BMPAltitudeStrF[10];
 
   dtostrf(AHTTemp, 3, 1, AHTTempStr);  // 3 width, 1 decimal place
+  dtostrf(AHTTempF, 3, 1, AHTTempStrF);
   dtostrf(AHTHumidity, 4, 2, AHTHumidityStr);
   dtostrf(BMPTemp, 3, 1, BMPTempStr);
-  dtostrf(BMPPressure / 100.0, 6, 2, BMPPressureStr);  // Convert Pa to kPa
+  dtostrf(BMPPressure / 1000.0, 6, 2, BMPPressureStr);  // Convert Pa to kPa
+  dtostrf(BMPPressureP / 1000.0, 6, 2, BMPPressureStrP);
   dtostrf(BMPAltitude, 6, 2, BMPAltitudeStr);
+  dtostrf(BMPAltitudeF, 6, 2, BMPAltitudeStrF);
     paint.SetWidth(300);
     paint.SetHeight(220);
     paint.Clear(UNCOLORED);
 
+    if (!toggleState){
+    paint.DrawStringAt(0, 0, "Temperature:", &Font20, COLORED); //Print temperature on one line and the value on the next
+    paint.DrawStringAt(0, 20, AHTTempStrF, &Font20, COLORED);
+    paint.DrawStringAt(60,22, "*F", &Font16, COLORED);
+    } 
+    else{
     paint.DrawStringAt(0, 0, "Temperature:", &Font20, COLORED); //Print temperature on one line and the value on the next
     paint.DrawStringAt(0, 20, AHTTempStr, &Font20, COLORED);
     paint.DrawStringAt(60,22, "*C", &Font16, COLORED);
+
+    }
   
     paint.DrawStringAt(0, 60, "Humidity:", &Font20, COLORED); //Print humidity on one line and the value on the next
     paint.DrawStringAt(0, 80, AHTHumidityStr, &Font20, COLORED); 
-      paint.DrawStringAt(70,82, "%", &Font16, COLORED);
+    paint.DrawStringAt(70,82, "%", &Font16, COLORED);
 
+    if (toggleState){
     paint.DrawStringAt(0, 120, "Pressure:", &Font20, COLORED); //Print pressure on one line and the value on the next
     paint.DrawStringAt(0, 140, BMPPressureStr, &Font20, COLORED);
     paint.DrawStringAt(100,143, "kPA", &Font16, COLORED);
+    }
+    else{
+    paint.DrawStringAt(0, 120, "Pressure:", &Font20, COLORED); //Print pressure on one line and the value on the next
+    paint.DrawStringAt(0, 140, BMPPressureStrP, &Font20, COLORED);
+    paint.DrawStringAt(100,143, "inHg", &Font16, COLORED);
+    }
 
+    if (toggleState){
     paint.DrawStringAt(0, 180, "Altitude:", &Font20, COLORED); //Print altitude on one line and the value on the next
     paint.DrawStringAt(-10, 200, BMPAltitudeStr, &Font20, COLORED);
     paint.DrawStringAt(75,203, "m", &Font16, COLORED);
+    }
+    else{
+    paint.DrawStringAt(0, 180, "Altitude:", &Font20, COLORED); //Print altitude on one line and the value on the next
+    paint.DrawStringAt(-10, 200, BMPAltitudeStrF, &Font20, COLORED);
+    paint.DrawStringAt(75,203, "ft", &Font16, COLORED);
+    }
 
   epd.Display_Partial(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
 delay(1000);
