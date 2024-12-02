@@ -120,6 +120,7 @@ float BMPPressureP = BMPPressure*0.295299802;
 
 
     if (toggleState){
+
     paint.DrawStringAt(0, 0, "Temperature:", &Font20, COLORED); //Print temperature on one line and the value on the next
     paint.DrawStringAt(0, 20, AHTTempStr, &Font20, COLORED);
     paint.DrawStringAt(60,22, "*C", &Font16, COLORED);
@@ -132,12 +133,11 @@ float BMPPressureP = BMPPressure*0.295299802;
     paint.DrawStringAt(-10, 200, BMPAltitudeStr, &Font20, COLORED);
     paint.DrawStringAt(75,203, "m", &Font16, COLORED);
     }
+    
     else{
     paint.DrawStringAt(0, 0, "Temperature:", &Font20, COLORED); //Print temperature on one line and the value on the next
     paint.DrawStringAt(0, 20, AHTTempStrF, &Font20, COLORED);
     paint.DrawStringAt(60,22, "*F", &Font16, COLORED);
-
-
 
     paint.DrawStringAt(0, 120, "Pressure:", &Font20, COLORED); //Print pressure on one line and the value on the next
     paint.DrawStringAt(0, 140, BMPPressureStrP, &Font20, COLORED);
@@ -146,9 +146,8 @@ float BMPPressureP = BMPPressure*0.295299802;
     paint.DrawStringAt(0, 180, "Altitude:", &Font20, COLORED); //Print altitude on one line and the value on the next
     paint.DrawStringAt(-10, 200, BMPAltitudeStrF, &Font20, COLORED);
     paint.DrawStringAt(75,203, "ft", &Font16, COLORED);
-
-
     }
+   
     paint.DrawStringAt(0, 60, "Humidity:", &Font20, COLORED); //Print humidity on one line and the value on the next
     paint.DrawStringAt(0, 80, AHTHumidityStr, &Font20, COLORED); 
     paint.DrawStringAt(70,82, "%", &Font16, COLORED);
