@@ -141,7 +141,7 @@ float BMPPressureP = BMPPressure*0.295299802;
 
     paint.DrawStringAt(0, 120, "Pressure:", &Font20, COLORED); //Print pressure on one line and the value on the next
     paint.DrawStringAt(0, 140, BMPPressureStrP, &Font20, COLORED);
-    paint.DrawStringAt(100,143, "inHg", &Font16, COLORED);
+    paint.DrawStringAt(85,143, "inHg", &Font16, COLORED);
 
     paint.DrawStringAt(0, 180, "Altitude:", &Font20, COLORED); //Print altitude on one line and the value on the next
     paint.DrawStringAt(-10, 200, BMPAltitudeStrF, &Font20, COLORED);
@@ -155,5 +155,7 @@ float BMPPressureP = BMPPressure*0.295299802;
 
 
   epd.Display_Partial(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
+  epd.Sleep();
 delay(1000);
+
 }
