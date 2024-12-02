@@ -1,3 +1,6 @@
+//This is our actual code page. The rest is either configuration or libaries. =)
+
+
 #include <SPI.h>
 #include "epd4in2_V2.h"
 #include "epdpaint.h"
