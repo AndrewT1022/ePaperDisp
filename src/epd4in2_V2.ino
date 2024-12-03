@@ -45,8 +45,8 @@ Epd epd;
 Adafruit_BMP280 bmp; //Initialize BMP280 Sensor
 Adafruit_AHTX0 aht; //Initialize AHT21 Sensor
 int buttonPin = 5; //----------ASSIGN BUTTON PIN-----------
-bool toggleState = false;
-auto lastButtonState = HIGH;
+bool toggleState = false; // initial state
+auto lastButtonState = HIGH; // initial state
 
 void setup() {
 
@@ -58,7 +58,7 @@ void setup() {
                   Adafruit_BMP280::STANDBY_MS_250); // Compromise made here to give us the best of both worlds in response time and power
   bmp.begin(); //start the bmp
   aht.begin(); //start the aht
-pinMode(buttonPin, INPUT); //button
+pinMode(buttonPin, INPUT); //define button as input
 
   if (epd.Init() != 0) { //start the screen, but hault if it fails
     Serial.print("e-Paper init failed");
@@ -69,17 +69,15 @@ epd.Clear(); //clear the display
 paint.SetWidth(250); //set the canvas size
 paint.SetHeight(280);
 paint.Clear(UNCOLORED); //clear the canvas
-
-delay(200); //delay to account for weird bugs
 }
 
 void loop() {
 //button
-auto buttonState = digitalRead(buttonPin);
+auto buttonState = digitalRead(buttonPin); //read button status
 if (buttonState == LOW && lastButtonState == HIGH){
-  toggleState = !toggleState;
+  toggleState = !toggleState;             // toggle state if button high
 }
-lastButtonState=buttonState;
+lastButtonState=buttonState;              // set last button state
 
 sensors_event_t humidity, temp;
 aht.getEvent(&humidity, &temp);
@@ -117,7 +115,7 @@ float BMPPressureP = BMPPressure*0.295299802; // inHg
     paint.SetHeight(280);
     paint.Clear(UNCOLORED);
 
-
+// button used to toggle b/t metric and imperial
 //Metric section
     if (toggleState){
     paint.DrawStringAt(0, 0, "Temperature:", &Font20, COLORED); //Print temperature on one line and the value on the next
@@ -156,7 +154,7 @@ float BMPPressureP = BMPPressure*0.295299802; // inHg
 //Creds
     paint.DrawStringAt(0, 245, "Andrew Thomas,", &Font16, COLORED); //Print humidity on one line and the value on the next
     paint.DrawStringAt(0, 265, "Kyle Davis", &Font16, COLORED); //Print humidity on one line and the value on the next
-  epd.Display_Partial(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight());
+  epd.Display_Partial(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight()); // push paint to display
   epd.Sleep();
 delay(1000);
 
