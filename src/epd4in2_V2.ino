@@ -1,5 +1,7 @@
 //This is our actual code page. The rest is either configuration or libaries. =)
 
+//We are using I2C for both the AHT21 and the BMP280, and SPI for the e-ink screen
+
 //Copyright for the e-ink display libraries:
 /*
  *  @filename   :   epd4in2_V2.cpp
@@ -28,7 +30,6 @@
  */
 
 #include <SPI.h>
-#include <string>
 #include "epd4in2_V2.h"
 #include "epdpaint.h"
 
@@ -48,41 +49,37 @@ bool toggleState = false;
 auto lastButtonState = HIGH;
 
 void setup() {
-  // put your setup code here, to run once:
+
   Serial.begin(9600);
      bmp.setSampling(Adafruit_BMP280::MODE_FORCED,      // Set mode to forced, lowest power.
                   Adafruit_BMP280::SAMPLING_X1,        // Set oversampling for pressure to 1, lowest power.
                   Adafruit_BMP280::SAMPLING_X1,       // Set oversampling for temperature to 1, lowest power.
                   Adafruit_BMP280::FILTER_OFF,       // Turn off noise filtering, lowest power.
                   Adafruit_BMP280::STANDBY_MS_250); // Compromise made here to give us the best of both worlds in response time and power
-  bmp.begin();
-  aht.begin();
+  bmp.begin(); //start the bmp
+  aht.begin(); //start the aht
+pinMode(buttonPin, INPUT); //button
 
-  if (epd.Init() != 0) {
+  if (epd.Init() != 0) { //start the screen, but hault if it fails
     Serial.print("e-Paper init failed");
     return;
   }
 
-  /* This clears the SRAM of the e-paper display */
-  epd.Clear();
+epd.Clear(); //clear the display
+paint.SetWidth(250); //set the canvas size
+paint.SetHeight(280);
+paint.Clear(UNCOLORED); //clear the canvas
 
-    paint.SetWidth(250);
-    paint.SetHeight(280);
-
-paint.Clear(UNCOLORED);
-
+delay(200); //delay to account for weird bugs
 }
 
 void loop() {
 //button
-pinMode(buttonPin, INPUT);
 auto buttonState = digitalRead(buttonPin);
 if (buttonState == LOW && lastButtonState == HIGH){
   toggleState = !toggleState;
 }
 lastButtonState=buttonState;
-
-
 
 sensors_event_t humidity, temp;
 aht.getEvent(&humidity, &temp);
@@ -91,12 +88,12 @@ float AHTTempF = ((temp.temperature)*(1.8)+32); // *F
 float AHTHumidity = humidity.relative_humidity; // %
 float BMPTemp = bmp.readTemperature(); // *C
 float BMPPressure = bmp.readPressure(); // PA
-float BMPAltitude = bmp.readAltitude(1033.8); // m ------- PUT CURRENT LOCAL PRESSURE HERE ---------------------
-float BMPAltitudeF = BMPAltitude*3.28084;
-float BMPPressureP = BMPPressure*0.295299802;
+float BMPAltitude = bmp.readAltitude(1033.8); // in millibars <------- PUT CURRENT LOCAL PRESSURE HERE ---------------------
+float BMPAltitudeF = BMPAltitude*3.28084;  // meters
+float BMPPressureP = BMPPressure*0.295299802; // inHg
 
 
-//blehg
+//storage for the double to char conversion (screen wants char)
   char AHTTempStr[10];
   char AHTTempStrF[10];
   char AHTHumidityStr[10];
@@ -106,6 +103,8 @@ float BMPPressureP = BMPPressure*0.295299802;
   char BMPAltitudeStr[10];
   char BMPAltitudeStrF[10];
 
+
+//Convert doubles to chars because that's what the screen input wants
   dtostrf(AHTTemp, 3, 1, AHTTempStr);  // 3 width, 1 decimal place
   dtostrf(AHTTempF, 3, 1, AHTTempStrF);
   dtostrf(AHTHumidity, 4, 2, AHTHumidityStr);
