@@ -91,7 +91,7 @@ float AHTTempF = ((temp.temperature)*(1.8)+32); // *F
 float AHTHumidity = humidity.relative_humidity; // %
 float BMPTemp = bmp.readTemperature(); // *C
 float BMPPressure = bmp.readPressure(); // PA
-float BMPAltitude = bmp.readAltitude(1028.4); // m ------- PUT CURRENT LOCAL PRESSURE HERE ---------------------
+float BMPAltitude = bmp.readAltitude(1033.8); // m ------- PUT CURRENT LOCAL PRESSURE HERE ---------------------
 float BMPAltitudeF = BMPAltitude*3.28084;
 float BMPPressureP = BMPPressure*0.295299802;
 
@@ -146,7 +146,7 @@ float BMPPressureP = BMPPressure*0.295299802;
 
     paint.DrawStringAt(0, 180, "Altitude:", &Font20, COLORED); //Print altitude on one line and the value on the next
     paint.DrawStringAt(-10, 200, BMPAltitudeStrF, &Font20, COLORED);
-    paint.DrawStringAt(75,203, "ft", &Font16, COLORED);
+    paint.DrawStringAt(90,203, "ft", &Font16, COLORED);
     }
    
     paint.DrawStringAt(0, 60, "Humidity:", &Font20, COLORED); //Print humidity on one line and the value on the next
