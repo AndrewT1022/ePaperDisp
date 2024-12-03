@@ -1,6 +1,21 @@
 //This is our actual code page. The rest is either configuration or libaries. =)
 
+
+//This is our project, an ESP32C3 powered battery weather station using an E-ink display (think Kindle) and two climate sensors, an AHT21 and a BMP280. 
+
 //We are using I2C for both the AHT21 and the BMP280, and SPI for the e-ink screen
+
+//Failures:
+//We first tried getting the screen to work with an ESP32 and spent about a day debugging it.
+//As a last resort, we switched to an Arduino R3. We got it working but now we had a new ussue, it only had 2KB of RAM.
+//It used 93% of the ram just running the screen with no sensors. We had to switch.
+//We got the original DHT11 and BMP280 sensors working standalone from the screen with the arduino as well.
+//So then, we switched to using an ESP32C3 from SeeedStudio which also met our battery powered requirements! 
+//We pivoted to using an EHT21 instead of the DHT11 because it was quoted as being something like +-2 degrees and it was overall pretty awful.
+//So, we wired it, managed to get the code working for the screen this time, and figured out we had to use a different library than we originally thought
+//We got both the standalone sensor code and screen code working. We then combined these and output the sensor values to the screen.
+//Viola!
+//Lessons learned: Waveshare documentation isn't great. Neither is working with SPI. I2C is king.
 
 //Copyright for the e-ink display libraries:
 /*
@@ -117,7 +132,7 @@ float BMPPressureP = BMPPressure*0.295299802; // inHg
 
 // button used to toggle b/t metric and imperial
 //Metric section
-    if (toggleState){
+    if (toggleState){ 
     paint.DrawStringAt(0, 0, "Temperature:", &Font20, COLORED); //Print temperature on one line and the value on the next
     paint.DrawStringAt(0, 20, AHTTempStr, &Font20, COLORED);
     paint.DrawStringAt(60,22, "*C", &Font16, COLORED);
