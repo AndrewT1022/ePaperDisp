@@ -29,6 +29,7 @@
  */
 
 //Libraries!
+
 #include <SPI.h>
 #include "epd4in2_V2.h"
 #include "epdpaint.h"
@@ -89,7 +90,7 @@ float AHTHumidity = humidity.relative_humidity; //%
 float BMPTemp = bmp.readTemperature(); //*C
 float BMPPressure = bmp.readPressure(); //PA
 float BMPAltitude = bmp.readAltitude(1033.8); //in millibars <------- PUT CURRENT LOCAL PRESSURE HERE ---------------------
-float BMPAltitudeF = BMPAltitude*3.28084;  //meters
+float BMPAltitudeF = BMPAltitude*3.28084; //meters
 float BMPPressureP = BMPPressure*0.295299802; //inHg
 
 //Storage for the double to char conversion (screen wants char)
@@ -158,6 +159,8 @@ paint.DrawStringAt(0, 245, "Andrew Thomas,", &Font16, 0); //Add credits at the b
 paint.DrawStringAt(0, 265, "Kyle Davis", &Font16, 0); 
   epd.Display_Partial(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight()); //Push paint to display
   epd.Sleep();
-delay(60000); //Update every 1 minute! This is for the "final" form with the lowest power draw. Will add proper ESP32 sleep functions later.
+
+esp_sleep_enable_timer_wakeup(6000000); //Sleep for 60s
+esp_light_sleep_start();
 
 }
