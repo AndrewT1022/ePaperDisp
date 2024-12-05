@@ -45,41 +45,41 @@ int buttonPin = 5; //Assign button pin
 bool toggleState = false; //Initial button toggle state
 auto lastButtonState = HIGH; //Default the last button state to high
 
+
 void setup() {
-
   Serial.begin(9600); //Begin serial for debugging (turn off if not needed, saves power)
-  
-     bmp.setSampling(Adafruit_BMP280::MODE_FORCED,      // Set mode to forced, lowest power.
-                  Adafruit_BMP280::SAMPLING_X1,        // Set oversampling for pressure to 1, lowest power.
-                  Adafruit_BMP280::SAMPLING_X1,       // Set oversampling for temperature to 1, lowest power.
-                  Adafruit_BMP280::FILTER_OFF,       // Turn off noise filtering, lowest power.
-                  Adafruit_BMP280::STANDBY_MS_250); // Compromise made here to give us the best of both worlds in response time and power
-  
-  //These configurations were found from the BMP280 documentation! https://cdn-shop.adafruit.com/datasheets/BST-BMP280-DS001-11.pdf , table 15
-  
-  bmp.begin(); //Start the bmp
-  aht.begin(); //Start the aht
-pinMode(buttonPin, INPUT); //Define button pin as an input
 
-  if (epd.Init() != 0) { //Start the screen, but hault the code if it fails
-    Serial.print("e-Paper init failed");
-    return;
-  }
+  pinMode(buttonPin, INPUT); //Define button pin as an input
+
+
+     bmp.setSampling(Adafruit_BMP280::MODE_FORCED,         // Set mode to forced, lowest power.
+                     Adafruit_BMP280::SAMPLING_X1,        // Set oversampling for pressure to 1, lowest power.
+                     Adafruit_BMP280::SAMPLING_X1,       // Set oversampling for temperature to 1, lowest power.
+                     Adafruit_BMP280::FILTER_OFF,       // Turn off noise filtering, lowest power.
+                     Adafruit_BMP280::STANDBY_MS_250); // Compromise made here to give us the best of both worlds in response time and power
+  //These configurations were found from the BMP280 documentation! https://cdn-shop.adafruit.com/datasheets/BST-BMP280-DS001-11.pdf, table 15
+  
+bmp.begin(); //Start the bmp sensor
+aht.begin(); //Start the aht sensor
+epd.Init();  //Start the screen
 
 epd.Clear(); //Clear the display
 paint.SetWidth(250); //Set the canvas size
 paint.SetHeight(280);
-paint.Clear(1); //Clear the canvas
 }
 
+
 void loop() {
-  
+
+paint.Clear(1); //Clear previous canvas
+
 //Button code!
 auto buttonState = digitalRead(buttonPin); //Read button status
 if (buttonState == LOW && lastButtonState == HIGH){
   toggleState = !toggleState;              //Toggle state if button high
 }
 lastButtonState=buttonState;               //Set last button state
+
 
 sensors_event_t humidity, temp; //I'm not completely sure why we have to do this. Don't care. It works.
 aht.getEvent(&humidity, &temp); //Get the sensor event and put it in a variable
@@ -92,6 +92,7 @@ float BMPAltitude = bmp.readAltitude(1033.8); //in millibars <------- PUT CURREN
 float BMPAltitudeF = BMPAltitude*3.28084;  //meters
 float BMPPressureP = BMPPressure*0.295299802; //inHg
 
+
 //Storage for the double to char conversion (screen wants char)
   char AHTTempStr[10];      //Char with width 10
   char AHTTempStrF[10];     //Char with width 10
@@ -102,6 +103,7 @@ float BMPPressureP = BMPPressure*0.295299802; //inHg
   char BMPAltitudeStr[10];  //Char with width 10
   char BMPAltitudeStrF[10]; //Char with width 10
 
+
 //Convert doubles to const chars because that's what the screen input command wants
   dtostrf(AHTTemp, 3, 1, AHTTempStr);  // 3 width, 1 decimal place
   dtostrf(AHTTempF, 3, 1, AHTTempStrF);
@@ -111,15 +113,11 @@ float BMPPressureP = BMPPressure*0.295299802; //inHg
   dtostrf(BMPPressureP / 1000.0, 6, 2, BMPPressureStrP);
   dtostrf(BMPAltitude, 6, 2, BMPAltitudeStr);
   dtostrf(BMPAltitudeF, 6, 2, BMPAltitudeStrF);
-  
-    paint.SetWidth(250);
-    paint.SetHeight(280);
-    paint.Clear(1);
 
 //Button used to toggle between metric and imperial
 
 //Metric section
-    if (toggleState){ 
+  if (toggleState){ 
     paint.DrawStringAt(0, 0, "Temperature:", &Font20, 0); //Print temperature on one line and the value on the next
     paint.DrawStringAt(0, 20, AHTTempStr, &Font20, 0);
     paint.DrawStringAt(60,22, "*C", &Font16, 0); //Print unit next to text
@@ -134,7 +132,7 @@ float BMPPressureP = BMPPressure*0.295299802; //inHg
     }
 
 //Imperial section
-    else{
+  else{
     paint.DrawStringAt(0, 0, "Temperature:", &Font20, 0); //Print temperature on one line and the value on the next
     paint.DrawStringAt(0, 20, AHTTempStrF, &Font20, 0);
     paint.DrawStringAt(60,22, "*F", &Font16, 0); //Print unit next to text
