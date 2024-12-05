@@ -29,7 +29,6 @@
  */
 
 //Libraries!
-
 #include <SPI.h>
 #include "epd4in2_V2.h"
 #include "epdpaint.h"
@@ -40,17 +39,19 @@ unsigned char image[9000]; //Buffer size!
 Paint paint(image, 400, 600); //Width should be the multiple of 8
 Epd epd; //Define the display
 
-Adafruit_BMP280 bmp; //Initialize the BMP280 sensor
-Adafruit_AHTX0 aht; //Initialize the AHT21 sensor
-int buttonPin = 5; //Assign button pin
-bool toggleState = false; //Initial button toggle state
+Adafruit_BMP280 bmp;             //Initialize the BMP280 sensor
+Adafruit_AHTX0 aht;             //Initialize the AHT21 sensor
+int buttonPin = 5;             //Assign button pin
+bool toggleState = false;     //Initial button toggle state
 auto lastButtonState = HIGH; //Default the last button state to high
 
 void setup() {
 
-  Serial.begin(9600); //Begin serial for debugging (turn off if not needed, saves power)
+  setCpuFrequencyMhz(40); //Low power mode!
+
+  //Serial.begin(9600); //Begin serial for debugging (turn off if not needed)
   
-     bmp.setSampling(Adafruit_BMP280::MODE_FORCED,      // Set mode to forced, lowest power.
+     bmp.setSampling(Adafruit_BMP280::MODE_FORCED,         // Set mode to forced, lowest power.
                      Adafruit_BMP280::SAMPLING_X1,        // Set oversampling for pressure to 1, lowest power.
                      Adafruit_BMP280::SAMPLING_X1,       // Set oversampling for temperature to 1, lowest power.
                      Adafruit_BMP280::FILTER_OFF,       // Turn off noise filtering, lowest power.
@@ -66,11 +67,11 @@ pinMode(buttonPin, INPUT); //Define button pin as an input
     Serial.print("e-Paper init failed");
     return;
   }
-
 epd.Clear(); //Clear the display
 paint.SetWidth(250); //Set the canvas size
 paint.SetHeight(280);
 paint.Clear(1); //Clear the canvas
+
 }
 
 void loop() {
@@ -82,8 +83,10 @@ if (buttonState == LOW && lastButtonState == HIGH){
 }
 lastButtonState=buttonState;               //Set last button state
 
-sensors_event_t humidity, temp; //I'm not completely sure why we have to do this. Don't care. It works.
-aht.getEvent(&humidity, &temp); //Get the sensor event and put it in a variable
+sensors_event_t humidity, temp; //I'm not completely sure why we have to use this. Don't care. It works.
+aht.getEvent(&humidity, &temp); //Get the sensor event and put it in variables
+
+//Read sensor data:
 float AHTTemp = temp.temperature; //*C
 float AHTTempF = ((temp.temperature)*(1.8)+32); //*F
 float AHTHumidity = humidity.relative_humidity; //%
@@ -93,7 +96,7 @@ float BMPAltitude = bmp.readAltitude(1033.8); //in millibars <------- PUT CURREN
 float BMPAltitudeF = BMPAltitude*3.28084; //meters
 float BMPPressureP = BMPPressure*0.295299802; //inHg
 
-//Storage for the double to char conversion (screen wants char)
+//Storage for the double to char conversion (the paint command wants char)
   char AHTTempStr[10];      //Char with width 10
   char AHTTempStrF[10];     //Char with width 10
   char AHTHumidityStr[10];  //Char with width 10
@@ -103,19 +106,17 @@ float BMPPressureP = BMPPressure*0.295299802; //inHg
   char BMPAltitudeStr[10];  //Char with width 10
   char BMPAltitudeStrF[10]; //Char with width 10
 
-//Convert doubles to const chars because that's what the screen input command wants
-  dtostrf(AHTTemp, 3, 1, AHTTempStr);  // 3 width, 1 decimal place
-  dtostrf(AHTTempF, 3, 1, AHTTempStrF);
-  dtostrf(AHTHumidity, 4, 2, AHTHumidityStr);
-  dtostrf(BMPTemp, 3, 1, BMPTempStr);
-  dtostrf(BMPPressure / 1000.0, 6, 2, BMPPressureStr);  // Convert Pa to kPa
-  dtostrf(BMPPressureP / 1000.0, 6, 2, BMPPressureStrP);
-  dtostrf(BMPAltitude, 6, 2, BMPAltitudeStr);
-  dtostrf(BMPAltitudeF, 6, 2, BMPAltitudeStrF);
+//Convert the sensor doubles to const chars because that's what the screen input command wants
+  dtostrf(AHTTemp, 3, 1, AHTTempStr); // 3 width, 1 decimal place
+  dtostrf(AHTTempF, 3, 1, AHTTempStrF); //3 width, 1 decimal
+  dtostrf(AHTHumidity, 4, 2, AHTHumidityStr); //4 width, 2 decimals
+  dtostrf(BMPTemp, 3, 1, BMPTempStr); //3 width, 1 decimal
+  dtostrf(BMPPressure / 1000.0, 6, 2, BMPPressureStr);  // Convert Pa to kPa, 6 width, 2 decimals
+  dtostrf(BMPPressureP / 1000.0, 6, 2, BMPPressureStrP); //inHg, 6 width, 2 decimals
+  dtostrf(BMPAltitude, 6, 2, BMPAltitudeStr); //6 width, 2 decimals
+  dtostrf(BMPAltitudeF, 6, 2, BMPAltitudeStrF); //Farenheit, 6 width, 2 decimals
   
-    paint.SetWidth(250);
-    paint.SetHeight(280);
-    paint.Clear(1);
+  paint.Clear(1); //Clear canvas
 
 //Button used to toggle between metric and imperial
 
@@ -153,13 +154,12 @@ float BMPPressureP = BMPPressure*0.295299802; //inHg
     paint.DrawStringAt(0, 80, AHTHumidityStr, &Font20, 0); 
     paint.DrawStringAt(70,82, "%", &Font16, 0); //Print unit next to text
 
-
 //Credits
 paint.DrawStringAt(0, 245, "Andrew Thomas,", &Font16, 0); //Add credits at the bottom
 paint.DrawStringAt(0, 265, "Kyle Davis", &Font16, 0); 
   epd.Display_Partial(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight()); //Push paint to display
-  epd.Sleep();
+  epd.Sleep(); //Make display sleep
 
-esp_sleep_enable_timer_wakeup(6000000); //Sleep for 60s
-esp_light_sleep_start();
+  delay(1000); //Delay for 60 seconds, use ESP Light sleep in future if possible (I'm afraid it will interfere with SPI for the screen?)
+
 }
