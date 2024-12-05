@@ -2,7 +2,7 @@
     //ESP32C3 powered battery weather station using an E-ink display (think Kindle screen) and two climate sensors, an AHT21 and a BMP280. 
     //We are using I2C for both the AHT21 and the BMP280, and SPI for the e-ink screen
 
-/*       Copyright for the e-ink display libraries:
+/*Copyright for the e-ink display libraries:
  *  @filename   :   epd4in2_V2.cpp
  *  @brief      :   Implements for Dual-color e-paper library
  *  @author     :   Yehui from Waveshare
@@ -18,15 +18,7 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS OR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+*/
 
 //Libraries!
 #include <SPI.h>
