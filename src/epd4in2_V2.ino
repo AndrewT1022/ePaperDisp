@@ -15,7 +15,6 @@
 //So, we wired it, managed to get the code working for the screen this time, and figured out we had to use a different library than we originally thought
 //We got both the standalone sensor code and screen code working. We then combined these and output the sensor values to the screen.
 //Viola!
-//Lessons learned: Waveshare documentation isn't great. Neither is working with SPI. I2C is king.
 
 //Copyright for the e-ink display libraries:
 /*
