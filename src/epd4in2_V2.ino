@@ -162,5 +162,4 @@ paint.DrawStringAt(0, 265, "Kyle Davis", &Font16, 0);
 
 esp_sleep_enable_timer_wakeup(6000000); //Sleep for 60s
 esp_light_sleep_start();
-
 }
