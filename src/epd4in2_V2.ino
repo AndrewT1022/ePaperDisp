@@ -1,24 +1,8 @@
-//This is our actual code page. The rest is either configuration or libaries. =)
-
-//Presentation notes!  \/
-
-    //This is our project, an ESP32C3 powered battery weather station using an E-ink display (think Kindle screen) and two climate sensors, an AHT21 and a BMP280. 
-
+//This is our actual code page. The rest of the files are either configuration or libaries. =)
+    //ESP32C3 powered battery weather station using an E-ink display (think Kindle screen) and two climate sensors, an AHT21 and a BMP280. 
     //We are using I2C for both the AHT21 and the BMP280, and SPI for the e-ink screen
 
-    //Failures:
-      //We first tried getting the screen to work with an ESP32 and spent about a day debugging it.
-      //As a last resort, we switched to an Arduino R3. We got it working but now we had a new ussue, it only had 2KB of RAM.
-      //It used 93% of the ram just running the screen with no sensors. We had to switch.
-      //We got the original DHT11 and BMP280 sensors working standalone from the screen with the arduino as well.
-      //So then, we switched to using an ESP32C3 from SeeedStudio which also met our battery powered requirements! 
-      //We pivoted to using an EHT21 instead of the DHT11 because it was quoted as being something like +-2 degrees and it was overall pretty awful.
-      //So, we wired it, managed to get the code working for the screen this time, and figured out we had to use a different library than we originally thought
-      //We got both the standalone sensor code and screen code working. We then combined these and output the sensor values to the screen.
-      //Viola!
-
-//Copyright for the e-ink display libraries:
-/*
+/*       Copyright for the e-ink display libraries:
  *  @filename   :   epd4in2_V2.cpp
  *  @brief      :   Implements for Dual-color e-paper library
  *  @author     :   Yehui from Waveshare
@@ -51,9 +35,6 @@
 #include <Adafruit_BMP280.h>
 #include <Adafruit_AHTX0.h>
 
-//
-#define COLORED     0
-#define UNCOLORED   1
 unsigned char image[9000]; //Buffer size!
 Paint paint(image, 400, 600); //Width should be the multiple of 8
 Epd epd; //Define the display
@@ -88,7 +69,7 @@ pinMode(buttonPin, INPUT); //Define button pin as an input
 epd.Clear(); //Clear the display
 paint.SetWidth(250); //Set the canvas size
 paint.SetHeight(280);
-paint.Clear(UNCOLORED); //Clear the canvas
+paint.Clear(1); //Clear the canvas
 }
 
 void loop() {
@@ -96,9 +77,9 @@ void loop() {
 //Button code!
 auto buttonState = digitalRead(buttonPin); //Read button status
 if (buttonState == LOW && lastButtonState == HIGH){
-  toggleState = !toggleState;             //Toggle state if button high
+  toggleState = !toggleState;              //Toggle state if button high
 }
-lastButtonState=buttonState;              //Set last button state
+lastButtonState=buttonState;               //Set last button state
 
 sensors_event_t humidity, temp; //I'm not completely sure why we have to do this. Don't care. It works.
 aht.getEvent(&humidity, &temp); //Get the sensor event and put it in a variable
@@ -111,7 +92,6 @@ float BMPAltitude = bmp.readAltitude(1033.8); //in millibars <------- PUT CURREN
 float BMPAltitudeF = BMPAltitude*3.28084;  //meters
 float BMPPressureP = BMPPressure*0.295299802; //inHg
 
-
 //Storage for the double to char conversion (screen wants char)
   char AHTTempStr[10];      //Char with width 10
   char AHTTempStrF[10];     //Char with width 10
@@ -121,7 +101,6 @@ float BMPPressureP = BMPPressure*0.295299802; //inHg
   char BMPPressureStrP[10]; //Char with width 10
   char BMPAltitudeStr[10];  //Char with width 10
   char BMPAltitudeStrF[10]; //Char with width 10
-
 
 //Convert doubles to const chars because that's what the screen input command wants
   dtostrf(AHTTemp, 3, 1, AHTTempStr);  // 3 width, 1 decimal place
@@ -135,48 +114,48 @@ float BMPPressureP = BMPPressure*0.295299802; //inHg
   
     paint.SetWidth(250);
     paint.SetHeight(280);
-    paint.Clear(UNCOLORED);
+    paint.Clear(1);
 
 //Button used to toggle between metric and imperial
 
 //Metric section
     if (toggleState){ 
-    paint.DrawStringAt(0, 0, "Temperature:", &Font20, COLORED); //Print temperature on one line and the value on the next
-    paint.DrawStringAt(0, 20, AHTTempStr, &Font20, COLORED);
-    paint.DrawStringAt(60,22, "*C", &Font16, COLORED); //Print unit next to text
+    paint.DrawStringAt(0, 0, "Temperature:", &Font20, 0); //Print temperature on one line and the value on the next
+    paint.DrawStringAt(0, 20, AHTTempStr, &Font20, 0);
+    paint.DrawStringAt(60,22, "*C", &Font16, 0); //Print unit next to text
 
-    paint.DrawStringAt(0, 120, "Pressure:", &Font20, COLORED); //Print pressure on one line and the value on the next
-    paint.DrawStringAt(0, 140, BMPPressureStr, &Font20, COLORED);
-    paint.DrawStringAt(100,143, "kPA", &Font16, COLORED); //Print unit next to text
+    paint.DrawStringAt(0, 120, "Pressure:", &Font20, 0); //Print pressure on one line and the value on the next
+    paint.DrawStringAt(0, 140, BMPPressureStr, &Font20, 0);
+    paint.DrawStringAt(100,143, "kPA", &Font16, 0); //Print unit next to text
 
-    paint.DrawStringAt(0, 180, "Altitude:", &Font20, COLORED); //Print altitude on one line and the value on the next
-    paint.DrawStringAt(-10, 200, BMPAltitudeStr, &Font20, COLORED);
-    paint.DrawStringAt(75,203, "m", &Font16, COLORED); //Print unit next to text
+    paint.DrawStringAt(0, 180, "Altitude:", &Font20, 0); //Print altitude on one line and the value on the next
+    paint.DrawStringAt(-10, 200, BMPAltitudeStr, &Font20, 0);
+    paint.DrawStringAt(75,203, "m", &Font16, 0); //Print unit next to text
     }
 
 //Imperial section
     else{
-    paint.DrawStringAt(0, 0, "Temperature:", &Font20, COLORED); //Print temperature on one line and the value on the next
-    paint.DrawStringAt(0, 20, AHTTempStrF, &Font20, COLORED);
-    paint.DrawStringAt(60,22, "*F", &Font16, COLORED); //Print unit next to text
+    paint.DrawStringAt(0, 0, "Temperature:", &Font20, 0); //Print temperature on one line and the value on the next
+    paint.DrawStringAt(0, 20, AHTTempStrF, &Font20, 0);
+    paint.DrawStringAt(60,22, "*F", &Font16, 0); //Print unit next to text
 
-    paint.DrawStringAt(0, 120, "Pressure:", &Font20, COLORED); //Print pressure on one line and the value on the next
-    paint.DrawStringAt(0, 140, BMPPressureStrP, &Font20, COLORED);
-    paint.DrawStringAt(85,143, "inHg", &Font16, COLORED); //Print unit next to text
+    paint.DrawStringAt(0, 120, "Pressure:", &Font20, 0); //Print pressure on one line and the value on the next
+    paint.DrawStringAt(0, 140, BMPPressureStrP, &Font20, 0);
+    paint.DrawStringAt(85,143, "inHg", &Font16, 0); //Print unit next to text
 
-    paint.DrawStringAt(0, 180, "Altitude:", &Font20, COLORED); //Print altitude on one line and the value on the next
-    paint.DrawStringAt(-10, 200, BMPAltitudeStrF, &Font20, COLORED);
-    paint.DrawStringAt(90,203, "ft", &Font16, COLORED); //Print unit next to text
+    paint.DrawStringAt(0, 180, "Altitude:", &Font20, 0); //Print altitude on one line and the value on the next
+    paint.DrawStringAt(-10, 200, BMPAltitudeStrF, &Font20, 0);
+    paint.DrawStringAt(90,203, "ft", &Font16, 0); //Print unit next to text
     }
    
-    paint.DrawStringAt(0, 60, "Humidity:", &Font20, COLORED); //Print humidity on one line and the value on the next
-    paint.DrawStringAt(0, 80, AHTHumidityStr, &Font20, COLORED); 
-    paint.DrawStringAt(70,82, "%", &Font16, COLORED); //Print unit next to text
+    paint.DrawStringAt(0, 60, "Humidity:", &Font20, 0); //Print humidity on one line and the value on the next
+    paint.DrawStringAt(0, 80, AHTHumidityStr, &Font20, 0); 
+    paint.DrawStringAt(70,82, "%", &Font16, 0); //Print unit next to text
 
 
 //Credits
-    paint.DrawStringAt(0, 245, "Andrew Thomas,", &Font16, COLORED); //Add credits at the bottom
-    paint.DrawStringAt(0, 265, "Kyle Davis", &Font16, COLORED); 
+paint.DrawStringAt(0, 245, "Andrew Thomas,", &Font16, 0); //Add credits at the bottom
+paint.DrawStringAt(0, 265, "Kyle Davis", &Font16, 0); 
   epd.Display_Partial(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight()); //Push paint to display
   epd.Sleep();
 delay(60000); //Update every 1 minute! This is for the "final" form with the lowest power draw. Will add proper ESP32 sleep functions later.
