@@ -51,10 +51,10 @@ void setup() {
   Serial.begin(9600); //Begin serial for debugging (turn off if not needed, saves power)
   
      bmp.setSampling(Adafruit_BMP280::MODE_FORCED,      // Set mode to forced, lowest power.
-                  Adafruit_BMP280::SAMPLING_X1,        // Set oversampling for pressure to 1, lowest power.
-                  Adafruit_BMP280::SAMPLING_X1,       // Set oversampling for temperature to 1, lowest power.
-                  Adafruit_BMP280::FILTER_OFF,       // Turn off noise filtering, lowest power.
-                  Adafruit_BMP280::STANDBY_MS_250); // Compromise made here to give us the best of both worlds in response time and power
+                     Adafruit_BMP280::SAMPLING_X1,        // Set oversampling for pressure to 1, lowest power.
+                     Adafruit_BMP280::SAMPLING_X1,       // Set oversampling for temperature to 1, lowest power.
+                     Adafruit_BMP280::FILTER_OFF,       // Turn off noise filtering, lowest power.
+                     Adafruit_BMP280::STANDBY_MS_250); // Compromise made here to give us the best of both worlds in response time and power
   
   //These configurations were found from the BMP280 documentation! https://cdn-shop.adafruit.com/datasheets/BST-BMP280-DS001-11.pdf , table 15
   
