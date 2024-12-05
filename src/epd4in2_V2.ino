@@ -160,6 +160,6 @@ paint.DrawStringAt(0, 265, "Kyle Davis", &Font16, 0);
   epd.Display_Partial(paint.GetImage(), 0, 0, paint.GetWidth(), paint.GetHeight()); //Push paint to display
   epd.Sleep(); //Make display sleep
 
-  delay(1000); //Delay for 60 seconds, use ESP Light sleep in future if possible (I'm afraid it will interfere with SPI for the screen?)
+  delay(60000); //Delay for 60 seconds, use ESP Light sleep in future if possible (I'm afraid it will interfere with SPI for the screen?)
 
 }
